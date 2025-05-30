@@ -1,9 +1,5 @@
 import requests
-import json
-import os
-from dotenv import load_dotenv
 import sqlalchemy
-load_dotenv()
 
 coin_list = [
     'bitcoin', 'ethereum', 'tether', 'xrp', 'binancecoin',
@@ -18,4 +14,11 @@ params = {
 }
 
 response = requests.get(url, params=params)
-print(response.json())
+
+if response.status_code == 200:
+    data = response.json()
+    for coin in data:
+        print(f"{coin['name']} ({coin['symbol'].upper()}): ${coin['current_price']}")
+    else:
+        print(f"Error fetching data: {response.status_code}")
+        
