@@ -2,9 +2,14 @@ import requests
 import json
 import os
 from dotenv import load_dotenv
+import sqlalchemy
 load_dotenv()
 
-coin_list = ['bitcoin', 'ethereum','usdt','bnb','solana','doge']
+coin_list = [
+    'bitcoin', 'ethereum', 'tether', 'xrp', 'binancecoin',
+    'solana', 'usd-coin', 'dogecoin', 'cardano', 'tron',
+    'avalanche-2', 'polkadot', 'chainlink', 'litecoin', 'stellar'
+]
 url = f"https://api.coingecko.com/api/v3/coins/markets"
 
 params = {

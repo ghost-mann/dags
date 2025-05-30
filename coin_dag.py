@@ -12,3 +12,21 @@ default_args = {
     'retries' : 5,
     'retry_delay' : 2
 }
+
+with DAG(
+    dag_id='coin_dag',
+    schedule_interval='@hourly',
+    default_args=default_args,
+    catchup=False,
+    tags= ['coin','coins']
+) as dag:
+    
+    hello = BashOperator (
+        task_id = 'print_hi',
+        bash_command="echo 'Hello you!'"
+    )
+    
+    coin_price = BashOperator (
+        task_id = 'extract_price',
+        bash_command='python3 /home/austin/airflow/dags/coin_price.py'
+    )
