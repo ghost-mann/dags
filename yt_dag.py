@@ -5,6 +5,7 @@ from airflow.operators.bash import BashOperator
 from airflow.operators.python import PythonOperator
 from dotenv import load_dotenv
 from googleapiclient.discovery import build
+from datetime import datetime, timedelta
 
 # loading .env file
 load_dotenv()
@@ -18,6 +19,12 @@ AIVEN_DB_CONFIG = {
     'user':os.getenv('AIVEN_USER'),
     'password':os.getenv('AIVEN_PASSWORD'),
     'port':os.getenv('AIVEN_PORT')
+}
+
+default_args = {
+    'owner' : 'Austin',
+    'retries' : 1,
+    'retry_delay' : timedelta(minutes=2)
 }
 
 # yt api connection
