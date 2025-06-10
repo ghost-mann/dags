@@ -35,6 +35,3 @@ with DAG (
     
 starter >> run_script
     
-
-
-
