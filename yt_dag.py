@@ -27,17 +27,40 @@ default_args = {
     'retry_delay' : timedelta(minutes=2)
 }
 
+def fetch_playlist_videos():
 # yt api connection
-youtube = build('youtube', 'v3', developerKey=YOUTUBE_API_KEY)
+    youtube = build('youtube', 'v3', developerKey=YOUTUBE_API_KEY)
+    playlist_id = ''
+    
+    # stores video IDs from playlist 
+    videos = []
+    
+    # used to get subsequent page results
+    # none means starts with first page
+    next_page_token = None
+    
+    while True:
+        response = youtube.playlistItems().list(
+            # snippet contains basic information eg video ID
+            part='snippet',
+            maxResults=50,
+            playlistId = playlist_id,
+            pageToken=next_page_token
+            
+        # returns response as python dictionary
+        ).execute()
+        
+        for item in response['items']:
+            # extracts video ID from the item(nested)
+            video_id = item["snippet"]["resourceId"]["videoId"]
+            videos.append(video_id)
+        
+        # checks if there's a next page token   
+        next_page_token = response.get("NextPageToken")
+        if not next_page_token:
+            break
+        
+        return videos
 
-request = youtube.search().list(
-    part='snippet',
-    q='programming tutorials',
-    maxResults=5,
-    type='video'
-)
 
-response = request.execute()
-
-for item in response['items']:
-    print(f"{item['snippet']['title']} - https://www.youtube.com/watch?v={item['id']['videoId']}")
+    
