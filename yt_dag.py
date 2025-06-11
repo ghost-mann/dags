@@ -94,8 +94,11 @@ def get_video_stats_and_store():
     
     
     # store in aiven postgresql
-    
+    # establishes connection to postgre
+    # dictionary unpacked into keyword arguments for connect
     conn = psycopg2.connect(**AIVEN_DB_CONFIG)
+    
+    # used to execute sql queries against the db
     cur = conn.cursor()
     
     cur.execute("""
@@ -118,5 +121,22 @@ def get_video_stats_and_store():
     conn.commit()
     cur.close()
     conn.close()
+    
+with DAG(
+    dag_id="youtube_playlist_ranking",
+    default_args=default_args,
+    start_date=datetime(2024,6,1),
+    schedule_interval='@daily',
+    catchup=False
+) as dag:
+    
+    salutations = BashOperator(
+        task_id = "greet the user",
+        bash_command="echo 'Hello fellow traveller!'"
+    )
+    get_stats = PythonOperator(
+        task_id = "get_video_stats_and_store",
+        python_callable=get_video_stats_and_store
+    )
     
     
