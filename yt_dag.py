@@ -62,5 +62,33 @@ def fetch_playlist_videos():
         
         return videos
 
-
+def get_video_stats_and_store():
+    youtube = build('youtube', 'v3', developerKey=YOUTUBE_API_KEY)
+    # retrieves video IDs from specified playlist
+    video_ids = fetch_playlist_videos()
+    
+    # stores video statistics
+    all_stats = []
+    # iterates through video IDs
+    for i in range(0, len(video_ids), 50):
+        # creates a sequence from 0 to 50 
+        batch = video_ids[i:i + 50]
+        # api call to retrieve data
+        response = youtube.videos().list(
+            part="statistics, snippet",
+            id=",".join(batch)
+        ).execute()
+    
+    # extracts and stores video info in dictionary
+    for video in response["items"]:
+        stats = {
+            "video_id":video["id"],
+            "title":video["snippet"]["title"],
+            "views":int(video["statistics"].get("viewCount", 0)),
+            "likes":int(video["statistics"].get("likeCount", 0))
+        }
+        all_stats.append(stats)
+        
+        # sort by views- desc
+        all_stats.sort(key=lambda x: x["views"], reverse=True)
     
