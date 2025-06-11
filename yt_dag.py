@@ -92,3 +92,31 @@ def get_video_stats_and_store():
         # sort by views- desc
         all_stats.sort(key=lambda x: x["views"], reverse=True)
     
+    
+    # store in aiven postgresql
+    
+    conn = psycopg2.connect(**AIVEN_DB_CONFIG)
+    cur = conn.cursor()
+    
+    cur.execute("""
+        CREATE TABLE IF NOT EXISTS yt_videos (
+            video_id TEXT PRIMARY KEY,
+            title TEXT,
+            views INTEGER,
+            likes INTEGER
+        );
+    """)
+    
+    for stat in all_stats:
+        cur.execute("""
+            INSERT INTO yt_videos (video_id, title, views, likes)
+            VALUES (%s, %s, %s, %s)
+            ON CONFLICT (video_id) DO UPDATE
+            SET views = EXCLUDED.views,
+                likes = EXCLUDED.likes;
+        """, (stat["video_id"], stat["title"], stat["views"], stat["likes"]))
+    conn.commit()
+    cur.close()
+    conn.close()
+    
+    
