@@ -126,12 +126,12 @@ with DAG(
     dag_id="youtube_playlist_ranking",
     default_args=default_args,
     start_date=datetime(2024,6,1),
-    schedule_interval='@daily',
+    schedule='@daily',
     catchup=False
 ) as dag:
     
     salutations = BashOperator(
-        task_id = "greet the user",
+        task_id = "greet_user",
         bash_command="echo 'Hello fellow traveller!'"
     )
     get_stats = PythonOperator(
