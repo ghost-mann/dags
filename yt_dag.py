@@ -30,7 +30,7 @@ default_args = {
 def fetch_playlist_videos():
 # yt api connection
     youtube = build('youtube', 'v3', developerKey=YOUTUBE_API_KEY)
-    playlist_id = ''
+    playlist_id = 'PLDbSvEZka6GGanXjSfH1bQNVheppFQWWo'
     
     # stores video IDs from playlist 
     videos = []
